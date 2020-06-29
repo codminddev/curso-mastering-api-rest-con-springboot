@@ -55,7 +55,6 @@ public class ProductController {
 		
 		if(deleteProduct == null) throw new RuntimeException("No existe el productos"); 
 		
-		var a = Product.builder().build();
 		this.products.remove(deleteProduct);
 		return new ResponseEntity(HttpStatus.OK);
 	}
