@@ -16,22 +16,4 @@ public class HelloWorldController {
 	public String hello() {
 		return "Hello world";
 	}
-	
-	@GetMapping(value="products")
-	public Product findProduct() {
-		/*
-		Product product = new Product();
-		product.setId(1L);
-		product.setName("Product 1");
-		product.setCategory("category 1");
-		*/
-		
-		Product product = Product.builder()
-				.id(1L)
-				.name("Product 1")
-				.category("Category 1")
-				.build();
-		
-		return product;
-	}
 }
