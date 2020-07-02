@@ -3,7 +3,11 @@ package com.codmind.orderapi.controllers;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -12,73 +16,60 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.codmind.orderapi.converters.ProductConverter;
+import com.codmind.orderapi.dtos.ProductDTO;
 import com.codmind.orderapi.entity.Product;
+import com.codmind.orderapi.repository.ProductRepositiry;
+import com.codmind.orderapi.services.ProductService;
 
 @RestController
 public class ProductController {
+	
+	@Autowired
+	private ProductService productService;
+	
+	private ProductConverter converter = new ProductConverter();
 
-	private List<Product> products = new ArrayList<>();
-	
-	public ProductController() {
-		for(int c = 0; c< 10; c++) {
-			products.add(Product.builder()
-					.id((c+1L))
-					.name("Product " + (c+1L))
-					.build()
-					);
-		}
-	}
-	
-	
-	
 	@GetMapping(value="/products/{productId}")
-	public ResponseEntity<Product> findById(@PathVariable("productId") Long productId) {
-		for(Product prod : this.products) {
-			if(prod.getId().longValue() == productId.longValue()) {
-				return new ResponseEntity<Product>(prod, HttpStatus.OK);
-			}
-		}
-		return new ResponseEntity<Product>(HttpStatus.NO_CONTENT);
+	public ResponseEntity<ProductDTO> findById(@PathVariable("productId") Long productId) {
+		Product product = productService.findById(productId);
+		ProductDTO productDTO = converter.fromEntity(product);
+		return new ResponseEntity<ProductDTO>(productDTO, HttpStatus.OK);
 	}
 	
 	@DeleteMapping(value="/products/{productId}")
 	public ResponseEntity<Void> delete(@PathVariable("productId") Long productId) {
-		Product deleteProduct = null;
-		for(Product prod : this.products) {
-			if(prod.getId().longValue() == productId.longValue()) {
-				deleteProduct = prod;
-				break;
-			}
-		}
-		
-		if(deleteProduct == null) throw new RuntimeException("No existe el productos"); 
-		
-		this.products.remove(deleteProduct);
+		productService.delete(productId);
 		return new ResponseEntity(HttpStatus.OK);
 	}
 	
+	// /products?pageNumber=1&pageSize=10
 	@GetMapping(value="/products")
-	public ResponseEntity<List<Product>> findAll(){
-		return new ResponseEntity<List<Product>>(this.products, HttpStatus.OK);
+	public ResponseEntity<List<ProductDTO>> findAll(
+			@RequestParam(value="pageNumber", required = false, defaultValue = "0") int pageNumber,
+			@RequestParam(value="pageSize", required = false, defaultValue = "5") int pageSize
+			){
+		
+		Pageable page = PageRequest.of(pageNumber, pageSize);
+		List<Product> products = productService.findAll(page);
+		List<ProductDTO> dtoProducts = converter.fromEntity(products);
+		return new ResponseEntity<List<ProductDTO>>(dtoProducts, HttpStatus.OK);
 	}
 	
 	@PostMapping(value="/products") 
-	public ResponseEntity<Product> create(@RequestBody Product product) {
-		this.products.add(product);
-		return new ResponseEntity<Product>(product, HttpStatus.CREATED);
+	public ResponseEntity<ProductDTO> create(@RequestBody ProductDTO product) {
+		Product newProduct = productService.save(converter.fromDTO(product));
+		ProductDTO productDTO = converter.fromEntity(newProduct);
+		return new ResponseEntity<ProductDTO>(productDTO, HttpStatus.CREATED);
 	}
 	
 	@PutMapping(value="/products") 
-	public ResponseEntity<Product> update(@RequestBody Product product) {
-		for(Product prod : this.products) {
-			if(prod.getId().longValue() == product.getId().longValue()) {
-				prod.setName(product.getName());
-				return new ResponseEntity<Product>(product, HttpStatus.OK);
-			}
-		}
-		throw new RuntimeException("No existe el productos");
+	public ResponseEntity<ProductDTO> update(@RequestBody ProductDTO product) {
+		Product updateProduct = productService.save(converter.fromDTO(product));
+		ProductDTO productDTO = converter.fromEntity(updateProduct);
+		return new ResponseEntity<ProductDTO>(productDTO, HttpStatus.OK);
 	}
-	
 }
