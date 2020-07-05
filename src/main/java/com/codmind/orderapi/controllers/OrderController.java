@@ -25,7 +25,8 @@ import com.codmind.orderapi.utils.WrapperResponse;
 @RestController
 public class OrderController {
 	
-	private OrderConverter converter = new OrderConverter();
+	@Autowired
+	private OrderConverter converter;
 	
 	@Autowired
 	private OrderService orderService;

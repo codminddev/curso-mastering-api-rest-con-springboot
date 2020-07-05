@@ -9,10 +9,13 @@ import com.codmind.orderapi.dtos.OrderLineDTO;
 import com.codmind.orderapi.entity.Order;
 import com.codmind.orderapi.entity.OrderLine;
 
+import lombok.AllArgsConstructor;
+
+@AllArgsConstructor
 public class OrderConverter extends AbstractConverter<Order, OrderDTO> {
 
-	private static final DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy hh:mm:ss");
-	private ProductConverter productConverter = new ProductConverter();
+	private DateTimeFormatter dateTimeFormat;
+	private ProductConverter productConverter;
 
 	@Override
 	public OrderDTO fromEntity(Order entity) {

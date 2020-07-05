@@ -28,7 +28,8 @@ public class ProductController {
 	@Autowired
 	private ProductService productService;
 	
-	private ProductConverter converter = new ProductConverter();
+	@Autowired
+	private ProductConverter converter;
 
 	@GetMapping(value="/products/{productId}")
 	public ResponseEntity<WrapperResponse<ProductDTO>> findById(@PathVariable("productId") Long productId) {
