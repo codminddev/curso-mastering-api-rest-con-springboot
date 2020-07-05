@@ -51,14 +51,14 @@ public class OrderController {
 	
 	@PostMapping(value="/orders")
 	public ResponseEntity<WrapperResponse<OrderDTO>> create(@RequestBody OrderDTO order){
-		Order newOrder = null; // orderService.save(converter.fromDTO(order));
+		Order newOrder = orderService.save(converter.fromDTO(order));
 		return new WrapperResponse<>(true, "success", converter.fromEntity(newOrder))
 				.createResponse();
 	}
 	
 	@PutMapping(value="/orders")
 	public ResponseEntity<WrapperResponse<OrderDTO>> update(@RequestBody OrderDTO order){
-		Order newOrder = null; // orderService.save(converter.fromDTO(order));
+		Order newOrder = orderService.save(converter.fromDTO(order));
 		return new WrapperResponse<>(true, "success", converter.fromEntity(newOrder))
 				.createResponse();
 	}
