@@ -28,7 +28,7 @@ public class Order {
 	@Column(name="REG_DATE", nullable = false, updatable = false)
 	private LocalDateTime regDate;
 	
-	@OneToMany(mappedBy = "order")
+	@OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
 	private List<OrderLine> lines;
 	
 	@Column(name="TOTAL", nullable = false)
