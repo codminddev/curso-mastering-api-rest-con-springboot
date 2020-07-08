@@ -5,18 +5,21 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.codmind.orderapi.entity.Order;
 import com.codmind.orderapi.entity.OrderLine;
 import com.codmind.orderapi.entity.Product;
+import com.codmind.orderapi.entity.User;
 import com.codmind.orderapi.exceptions.GeneralServiceException;
 import com.codmind.orderapi.exceptions.NoDataFoundException;
 import com.codmind.orderapi.exceptions.ValidateServiceException;
 import com.codmind.orderapi.repository.OrderLineRepository;
 import com.codmind.orderapi.repository.OrderRepository;
 import com.codmind.orderapi.repository.ProductRepositiry;
+import com.codmind.orderapi.security.UserPrincipal;
 import com.codmind.orderapi.validators.OrderValidator;
 
 import lombok.extern.slf4j.Slf4j;
@@ -78,8 +81,9 @@ public class OrderService {
 	@Transactional
 	public Order save(Order order) {
 		try {
-			
 			OrderValidator.save(order);
+			
+			User user = UserPrincipal.getCurrentUser();
 			
 			double total = 0;
 			for(OrderLine line : order.getLines()) {
@@ -95,7 +99,7 @@ public class OrderService {
 			order.getLines().forEach(line -> line.setOrder(order));
 			
 			if(order.getId() == null) {
-				
+				order.setUser(user);
 				order.setRegDate(LocalDateTime.now());
 				return orderRepo.save(order);
 			}

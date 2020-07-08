@@ -33,6 +33,10 @@ public class Order {
 	
 	@Column(name="TOTAL", nullable = false)
 	private Double total;
+	
+	@ManyToOne
+	@JoinColumn(name="FK_USER", updatable = false)
+	private User user;
 
 	@Override
 	public int hashCode() {

@@ -19,4 +19,5 @@ public class OrderDTO {
 	private String regDate;
 	private List<OrderLineDTO> lines;
 	private Double total;
+	private UserDTO user;
 }

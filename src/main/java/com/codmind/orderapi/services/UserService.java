@@ -105,4 +105,14 @@ public class UserService {
 		return false;
 	}
 	
+	public String getUsernameFromToken(String jwt) {
+		try {
+			return Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(jwt).getBody().getSubject();	
+		} catch (Exception e) {
+			log.error(e.getMessage(), e);
+			throw new ValidateServiceException("Invalid Token");
+		}
+		
+	}
+	
 }

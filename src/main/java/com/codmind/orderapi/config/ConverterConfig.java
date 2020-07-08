@@ -24,7 +24,7 @@ public class ConverterConfig {
 	@Bean
 	public OrderConverter getOrderConverter() {
 		DateTimeFormatter format = DateTimeFormatter.ofPattern(datetimeFormat);
-		return new OrderConverter(format, getProductConverter());
+		return new OrderConverter(format, getProductConverter(), getUserConverter());
 	}
 	
 	@Bean
